@@ -23,12 +23,13 @@ labels = nx.get_edge_attributes(G,'weight')
 nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
 plt.savefig("maxflujo.png")
 
+#A maximum cut is a subset S of the vertices of G such that the number of edges between S and the complementary subset
+# is as large as possible.
+
 import dimod
 
 # Cálculo del flujo máximo
 # mediante un algoritmo clásico (Edmonds-Karp)
-#A maximum cut is a subset S of the vertices of G such that the number of edges between S and the complementary subset
-# is as large as possible.
 sampler = dimod.SimulatedAnnealingSampler()
 cut=dnx.weighted_maximum_cut(G,sampler)
 print(cut)
@@ -37,3 +38,27 @@ print(cut)
 alpha_s=0.3
 bqm = dimod.BinaryQuadraticModel({},{'aa': 1-alpha_s, 'ad': -2, 'ae': -2, 'bb': 1-alpha_s, 'bc': 2, 
                            'bf': -2, 'cc': 1-alpha_s, 'cf': -2, 'dd': 1, 'de': 2, 'ee': 1, 'ff': 1},0,'BINARY')
+
+from dimod.reference.samplers import ExactSolver
+sampler = ExactSolver()
+sampleset = sampler.sample(bqm)
+print(sampleset.lowest(atol=.5))
+print('###################')
+
+import sys
+file_path = 'randomfile.txt'
+sys.stdout = open(file_path, "w")
+print("This text will be added to the file")
+
+ 
+# Resolviendo el problema en la QPU
+# Uso el software de OCEAN para hacer embdding automatico
+from dwave.system import DWaveSampler, EmbeddingComposite
+sampler_auto = EmbeddingComposite(DWaveSampler(solver={'topology__type':'chimera'}))
+
+# Pasamos los valores de los coecientes del problema:
+linear = {('a', 'a'): 1-alpha_s, ('b', 'b'): 1-alpha_s, ('c', 'c'): 1-alpha_s,('d','d'): 1, ('e','e'): 1, ('f','f'): 1}
+quadratic = {('a', 'd'): -2, ('a', 'e'): -2, ('b', 'c'): 2, ('b','f'): -2, ('c','f'): -2, ('d','e'): 2}
+Q = {**linear, **quadratic}
+sampleset = sampler_auto.sample_qubo(Q, num_reads=5000)
+#print(sampleset)
