@@ -1,6 +1,7 @@
 import dwavebinarycsp
 from dwave.system.samplers import DWaveSampler
 from dwave.system.composites import EmbeddingComposite
+import dwave.inspector
 
 #sampler = EmbeddingComposite(DWaveSampler())
 sampler = EmbeddingComposite(DWaveSampler(solver='DW_2000Q_6'))
@@ -32,6 +33,8 @@ response = sampler.sample(bqm, num_reads = 5000)
 min_energy = next(response.data(['energy']))[0]
 
 print(response)
+
+dwave.inspector.show(response)
 
 total = 0
 for sample, energy, occurences in response.data(['sample', 'energy', 'num_occurrences']):
