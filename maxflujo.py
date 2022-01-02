@@ -42,14 +42,16 @@ bqm = dimod.BinaryQuadraticModel({},{'aa': 1-alpha_s, 'ad': -2, 'ae': -2, 'bb': 
 from dimod.reference.samplers import ExactSolver
 sampler = ExactSolver()
 sampleset = sampler.sample(bqm)
-print(sampleset.lowest(atol=.5))
-print('###################')
 
+# Redirigimos la salida a un fichero
 import sys
 file_path = 'randomfile.txt'
 sys.stdout = open(file_path, "w")
-print("This text will be added to the file")
 
+print('Algoritmo clásico: Edmonds-Karp')
+print('===============================')
+print(sampleset.lowest(atol=.5))
+print(' ')
  
 # Resolviendo el problema en la QPU
 # Uso el software de OCEAN para hacer embdding automatico
@@ -61,4 +63,7 @@ linear = {('a', 'a'): 1-alpha_s, ('b', 'b'): 1-alpha_s, ('c', 'c'): 1-alpha_s,('
 quadratic = {('a', 'd'): -2, ('a', 'e'): -2, ('b', 'c'): 2, ('b','f'): -2, ('c','f'): -2, ('d','e'): 2}
 Q = {**linear, **quadratic}
 sampleset = sampler_auto.sample_qubo(Q, num_reads=5000)
-#print(sampleset)
+
+print('Resolución en QPU')
+print('=================')
+print(sampleset)
