@@ -1,0 +1,9 @@
+Resolución en QPU
+=================
+   a  b  c  d energy num_oc. chain_.
+0  1  0  1  0   -4.0    4950     0.0
+1  1  0  0  0   -3.0      30     0.0
+2  1  1  1  0   -3.0      18     0.0
+3  0  1  0  1    0.0       1     0.0
+4  0  0  1  0    1.0       1     0.0
+['BINARY', 5 rows, 5000 samples, 4 variables]
